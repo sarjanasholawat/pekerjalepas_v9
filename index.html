@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pekerja Lepas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+
+<!-- ══ SIDEBAR OVERLAY (mobile) ══ -->
+<div id="sb-overlay" class="sb-overlay"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside id="sidebar" class="sidebar">
+
+  <!-- Logo + Brand -->
+  <div class="sb-header">
+    <div class="sb-logo">
+      <svg viewBox="0 0 28 28" fill="none"><rect x="4" y="7" width="20" height="16" rx="3" stroke="white" stroke-width="1.8"/><path d="M9 7V6a5 5 0 0110 0v1" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M9 14h10M9 18h6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </div>
+    <div class="sb-brand">
+      <div class="sb-brand-name">Pekerja Lepas</div>
+      <div class="sb-brand-sub">Manajemen Waktu</div>
+    </div>
+  </div>
+
+  <!-- User Profile -->
+  <div class="sb-user">
+    <div class="sb-user-avatar" id="sb-avatar">—</div>
+    <div class="sb-user-info">
+      <div class="sb-user-name" id="sb-user-name">-</div>
+      <div class="sb-user-role">User</div>
+    </div>
+  </div>
+
+  <!-- Nav Menu -->
+  <nav class="sb-nav">
+    <div class="sb-nav-section">Menu Utama</div>
+
+    <button class="sb-nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
+      <div class="sb-icon">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="2" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="10" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+      </div>
+      <span class="sb-nav-label">Dashboard</span>
+      <span class="sb-tooltip">Dashboard</span>
+    </button>
+
+    <button class="sb-nav-item" id="nav-pekerjaan" onclick="showPage('pekerjaan')">
+      <div class="sb-icon">
+        <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="sb-nav-label">Pekerjaan</span>
+      <span class="sb-tooltip">Pekerjaan</span>
+    </button>
+
+    <button class="sb-nav-item" id="nav-laporan" onclick="showPage('laporan')">
+      <div class="sb-icon">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="3" y="2" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 6h6M6 9h6M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="sb-nav-label">Laporan PDF</span>
+      <span class="sb-tooltip">Laporan PDF</span>
+    </button>
+
+    <div class="sb-divider" style="margin:6px 14px"></div>
+    <div class="sb-nav-section">Manajemen</div>
+
+    <button class="sb-nav-item" id="nav-proyek" onclick="showPage('proyek')">
+      <div class="sb-icon">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 7h14" stroke="currentColor" stroke-width="1.5"/><path d="M6 3V2M12 3V2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="6" cy="11" r="1" fill="currentColor"/><circle cx="9" cy="11" r="1" fill="currentColor"/><circle cx="12" cy="11" r="1" fill="currentColor"/></svg>
+      </div>
+      <span class="sb-nav-label">Proyek</span>
+      <span class="sb-tooltip">Proyek</span>
+    </button>
+
+    <button class="sb-nav-item" id="nav-kanban" onclick="showPage('kanban')">
+      <div class="sb-icon">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="4" height="14" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="7" y="2" width="4" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="2" width="4" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+      </div>
+      <span class="sb-nav-label">Papan Tugas</span>
+      <span class="sb-tooltip">Papan Tugas</span>
+    </button>
+
+    <button class="sb-nav-item" id="nav-invoice" onclick="showPage('invoice')">
+      <div class="sb-icon">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="3" y="2" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 6h6M6 9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12.5" cy="12.5" r="3.2" fill="white" stroke="currentColor" stroke-width="1.3"/><path d="M12.5 11v3l1.5 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <span class="sb-nav-label">Cetak Pembayaran</span>
+      <span class="sb-tooltip">Cetak Pembayaran</span>
+    </button>
+
+  </nav>
+
+  <div class="sb-bottom">
+    <div class="sb-divider"></div>
+    <button class="sb-logout" onclick="doLogout()">
+      <div class="sb-icon">
+        <svg viewBox="0 0 18 18" fill="none"><path d="M7 16H4a1 1 0 01-1-1V3a1 1 0 011-1h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 13l4-4-4-4M16 9H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="sb-nav-label">Keluar</span>
+      <span class="sb-tooltip">Keluar</span>
+    </button>
+  </div>
+</aside>
+
+<!-- Toggle sidebar — mengambang di tengah garis sidebar -->
+<button class="sb-toggle" id="sb-toggle" title="Perkecil/perlebar menu">
+  <svg viewBox="0 0 16 16" fill="none"><path d="M10 3L6 8l4 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<!-- ══ MAIN AREA ══ -->
+<div class="sb-main">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <button class="topbar-menu-btn" id="topbar-menu-btn" title="Buka menu">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <div class="topbar-page-title" id="topbar-page-title">Dashboard</div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbar-avatar">—</div>
+        <div>
+          <div class="topbar-name" id="topbar-name">-</div>
+          <div class="topbar-role">User</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="content-wrapper">
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="page active">
+      <div class="stat-grid" id="stat-grid"></div>
+
+      <!-- GRAFIK -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">
+            <svg viewBox="0 0 18 18" fill="none"><path d="M2 14l4-5 4 3 4-7 2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Grafik Pekerjaan
+          </div>
+          <div class="chart-controls">
+            <div class="chart-period-tabs">
+              <button class="period-tab active" id="tab-mingguan" onclick="setChartPeriod('mingguan')">Mingguan</button>
+              <button class="period-tab" id="tab-bulanan"  onclick="setChartPeriod('bulanan')">Bulanan</button>
+              <button class="period-tab" id="tab-tahunan"  onclick="setChartPeriod('tahunan')">Tahunan</button>
+            </div>
+            <select id="chart-year-sel" onchange="renderChart()" style="padding:5px 10px;border:1px solid var(--gray-200);border-radius:7px;font-size:12.5px;background:var(--white);cursor:pointer;outline:none"></select>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="main-chart"></canvas>
+          <div class="chart-empty" id="chart-empty" style="display:none">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="30" width="8" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="20" y="20" width="8" height="22" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="34" y="12" width="8" height="30" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+            <p>Belum ada data untuk ditampilkan</p>
+          </div>
+        </div>
+        <div class="chart-legend" id="chart-legend"></div>
+      </div>
+
+      <div class="filter-row" id="filter-row"></div>
+      <div class="table-card">
+        <table>
+          <thead><tr>
+            <th style="width:22%">Nama Pekerjaan</th>
+            <th style="width:12%">Proyek</th>
+            <th style="width:18%">Tanggal</th>
+            <th style="width:14%">Jam</th>
+            <th style="width:12%">Durasi</th>
+            <th style="width:12%">Tempat</th>
+            <th style="width:10%">Aksi</th>
+          </tr></thead>
+          <tbody id="dash-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PEKERJAAN -->
+    <section id="pekerjaan" class="page">
+      <div class="card form-card">
+        <h2 class="card-title" id="form-title-label">Input Pekerjaan Baru</h2>
+
+        <!-- Nama Pekerjaan: bisa ketik manual ATAU pilih dari papan tugas -->
+        <div class="form-group">
+          <label>Nama Pekerjaan</label>
+          <div class="nama-combo-wrap">
+            <input type="text" id="inp-nama" placeholder="Ketik nama pekerjaan atau pilih dari tugas..."
+              oninput="onNamaInput(this.value)" onfocus="showNamaDropdown()" autocomplete="off">
+            <button class="nama-combo-btn" id="nama-combo-toggle" onclick="toggleNamaDropdown()" type="button" title="Pilih dari Papan Tugas">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="nama-dropdown" id="nama-dropdown" style="display:none">
+              <div class="nama-dd-header">
+                <svg viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4 4h6M4 7h6M4 10h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                Dari Papan Tugas
+              </div>
+              <div id="nama-dd-list">
+                <div class="nama-dd-empty">Belum ada tugas di Papan Tugas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Proyek</label>
+          <select id="inp-kategori">
+            <option value="">— Pilih Proyek —</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Hari</label>
+            <input type="text" id="inp-hari" placeholder="Senin">
+          </div>
+          <div class="form-group">
+            <label>Tanggal</label>
+            <input type="date" id="inp-tgl">
+          </div>
+          <div class="form-group">
+            <label>Tempat Kerja</label>
+            <select id="inp-tempat">
+              <option value="Dirumah">🏠 Di Rumah</option>
+              <option value="DiKantor">🏢 Di Kantor</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Mode Pencatat Waktu</label>
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="mode-sw" onclick="setMode('stopwatch')">
+              <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="9" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M8 6v3l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M6 1.5h4M8 1.5v1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              Stopwatch
+            </button>
+            <button class="mode-btn" id="mode-wib" onclick="setMode('wib')">
+              <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 4v4l3 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M2 8h1M13 8h1M8 2v1M8 13v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Jam WIB
+            </button>
+          </div>
+        </div>
+        <div class="stopwatch-block" id="sw-block">
+          <div class="sw-display" id="sw-display">00:00:00</div>
+          <div class="sw-state-badge" id="sw-state-badge" style="display:none"></div>
+          <div class="sw-btns">
+            <button class="sw-btn btn-mulai" id="btn-mulai" onclick="swMulai()">
+              <svg viewBox="0 0 16 16" fill="none"><polygon points="4,2 14,8 4,14" fill="currentColor"/></svg> Mulai
+            </button>
+            <button class="sw-btn btn-pause" id="btn-pause" onclick="swPause()" disabled>
+              <svg viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="4" height="12" rx="1.5" fill="currentColor"/><rect x="9" y="2" width="4" height="12" rx="1.5" fill="currentColor"/></svg> Jeda
+            </button>
+            <button class="sw-btn btn-stop" id="btn-stop-sw" onclick="swStop()">
+              <svg viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="10" height="10" rx="1.5" fill="currentColor"/></svg> Berhenti
+            </button>
+            <button class="sw-btn btn-reset" onclick="swReset()">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3 8a5 5 0 1 0 1.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 4.5V8H6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- MODE JAM WIB: tombol Mulai & Selesai + input manual -->
+        <div class="stopwatch-block" id="wib-block" style="display:none">
+          <!-- Jam live -->
+          <div style="margin-bottom:12px">
+            <div style="font-size:11px;font-weight:600;color:var(--gray-600);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.4px">Jam WIB Sekarang</div>
+            <div class="sw-display" id="jam-wib-live" style="font-size:28px;margin:0;color:var(--blue-dark)">--:--:--</div>
+          </div>
+
+          <!-- Tombol + input manual dalam satu baris -->
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
+            <!-- Jam Mulai -->
+            <div style="flex:1;min-width:120px">
+              <div style="font-size:11px;font-weight:600;color:var(--gray-600);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px">Jam Mulai</div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <input type="time" id="wib-mulai-time" style="flex:1;min-width:0"
+                  oninput="wibManualInput('mulai', this.value)">
+                <button class="sw-btn btn-mulai" id="wib-btn-mulai" onclick="wibCatatMulai()" style="white-space:nowrap;padding:8px 12px;font-size:12px">
+                  <svg viewBox="0 0 16 16" fill="none" style="width:12px;height:12px"><polygon points="4,2 14,8 4,14" fill="currentColor"/></svg> Sekarang
+                </button>
+              </div>
+              <input type="hidden" id="wib-mulai">
+            </div>
+            <!-- Jam Selesai -->
+            <div style="flex:1;min-width:120px">
+              <div style="font-size:11px;font-weight:600;color:var(--gray-600);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px">Jam Selesai</div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <input type="time" id="wib-selesai-time" style="flex:1;min-width:0"
+                  oninput="wibManualInput('selesai', this.value)">
+                <button class="sw-btn btn-stop" id="wib-btn-selesai" onclick="wibCatatSelesai()" style="white-space:nowrap;padding:8px 12px;font-size:12px">
+                  <svg viewBox="0 0 16 16" fill="none" style="width:12px;height:12px"><rect x="3" y="3" width="10" height="10" rx="1.5" fill="currentColor"/></svg> Sekarang
+                </button>
+              </div>
+              <input type="hidden" id="wib-selesai">
+            </div>
+            <!-- Durasi -->
+            <div style="flex:1;min-width:100px">
+              <div style="font-size:11px;font-weight:600;color:var(--blue-text);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px">Durasi</div>
+              <div class="sw-display" id="wib-durasi-display" style="font-size:20px;margin:0;padding:9px 0">00:00:00</div>
+            </div>
+          </div>
+
+          <!-- Tombol Reset -->
+          <button class="sw-btn btn-reset" onclick="wibReset()" style="margin-top:2px">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M3 8a5 5 0 1 0 1.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 4.5V8H6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Reset
+          </button>
+        </div>
+        <div class="form-group" id="edit-durasi-wrap" style="display:none">
+          <label>Jam Kerja</label>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+            <div style="flex:1;min-width:110px">
+              <div style="font-size:11px;font-weight:600;color:var(--gray-600);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px">Jam Mulai</div>
+              <input type="time" id="edit-wib-mulai" oninput="editHitungDurasi()">
+            </div>
+            <div style="flex:1;min-width:110px">
+              <div style="font-size:11px;font-weight:600;color:var(--gray-600);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px">Jam Selesai</div>
+              <input type="time" id="edit-wib-selesai" oninput="editHitungDurasi()">
+            </div>
+            <div style="flex:1;min-width:90px">
+              <div style="font-size:11px;font-weight:600;color:var(--blue-text);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px">Durasi</div>
+              <div class="sw-display" id="edit-durasi-display" style="font-size:18px;margin:0;padding:9px 0">00:00:00</div>
+            </div>
+          </div>
+          <input type="hidden" id="inp-durasi-edit">
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+          <button class="btn-primary btn-full" id="btn-simpan" onclick="savePekerjaan()">
+            <svg viewBox="0 0 16 16" fill="none" style="width:14px;height:14px"><path d="M13 5l-6 6-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Simpan Pekerjaan
+          </button>
+          <button class="btn-cancel" id="btn-batal-edit" onclick="cancelEdit()" style="display:none;padding:10px 18px">Batal Edit</button>
+        </div>
+      </div>
+      <div class="sec-title">Daftar Pekerjaan</div>
+      <div class="table-card">
+        <table>
+          <thead><tr>
+            <th style="width:22%">Nama</th>
+            <th style="width:12%">Proyek</th>
+            <th style="width:18%">Tanggal</th>
+            <th style="width:14%">Jam</th>
+            <th style="width:12%">Durasi</th>
+            <th style="width:12%">Tempat</th>
+            <th style="width:10%">Aksi</th>
+          </tr></thead>
+          <tbody id="pek-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LAPORAN -->
+    <section id="laporan" class="page">
+      <div class="card" style="margin-bottom:1.2rem;padding:14px 18px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <label style="font-size:12.5px;font-weight:600;color:var(--gray-600);white-space:nowrap">Filter Bulan:</label>
+          <div class="filter-row" id="laporan-filter" style="margin:0;flex:1"></div>
+          <label style="font-size:12.5px;font-weight:600;color:var(--gray-600);white-space:nowrap">Proyek:</label>
+          <select id="laporan-filter-proyek" onchange="setLaporanFilterProyek(this.value)" style="padding:6px 10px;border:1px solid var(--gray-200);border-radius:99px;font-size:12px;background:var(--white);cursor:pointer;outline:none;min-width:140px">
+            <option value="all">Semua Proyek</option>
+          </select>
+          <select id="laporan-filter-kategori" onchange="setLaporanFilterKategori(this.value)" style="padding:6px 10px;border:1px solid var(--gray-200);border-radius:99px;font-size:12px;background:var(--white);cursor:pointer;outline:none;min-width:130px">
+            <option value="all">Semua Kategori</option>
+          </select>
+          <button class="btn-primary" onclick="doPrint()" style="padding:8px 16px;font-size:13px;white-space:nowrap">
+            <svg viewBox="0 0 16 16" fill="none" style="width:13px;height:13px"><rect x="3" y="5" width="10" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M5 5V3a1 1 0 011-1h4a1 1 0 011 1v2" stroke="currentColor" stroke-width="1.5"/></svg>
+            Cetak PDF
+          </button>
+        </div>
+      </div>
+      <div class="report-wrap" id="report-wrap">
+        <div class="kop">
+          <div class="kop-logo-box" style="cursor:default">
+            <div id="logo-display">
+              <div class="logo-placeholder">
+                <svg viewBox="0 0 32 32" fill="none"><rect x="4" y="4" width="24" height="24" rx="4" stroke="#1a6fca" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M10 22l5-6 4 5 3-3 4 4" stroke="#1a6fca" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="12" r="2" stroke="#1a6fca" stroke-width="1.5"/></svg>
+                <span>Logo</span>
+              </div>
+            </div>
+          </div>
+          <div class="kop-info">
+            <div class="kop-name" id="rpt-nama">Nama Studio / Perusahaan</div>
+            <div class="kop-sub"  id="rpt-alamat">Alamat &nbsp;|&nbsp; Telp &nbsp;|&nbsp; Email</div>
+          </div>
+        </div>
+        <div class="kop-stripe"></div>
+        <div class="report-body">
+          <div class="report-meta">
+            <div>
+              <div class="report-title" id="rpt-judul">Laporan Pekerjaan</div>
+              <div class="report-period" id="report-period"></div>
+            </div>
+            <div class="report-no-wrap">
+              <div class="report-no-label">No. Laporan</div>
+              <div class="report-no-val" id="report-no"></div>
+            </div>
+          </div>
+          <div class="rstat-grid" id="rstat-grid"></div>
+          <table class="report-table">
+            <thead><tr>
+              <th style="width:4%">No</th>
+              <th style="width:26%">Nama Pekerjaan</th>
+              <th style="width:12%">Proyek</th>
+              <th style="width:20%">Tanggal</th>
+              <th style="width:14%">Jam Kerja</th>
+              <th style="width:12%">Durasi</th>
+              <th style="width:12%">Tempat</th>
+            </tr></thead>
+            <tbody id="print-tbody"></tbody>
+          </table>
+          <div class="ttd-section">
+            <div class="ttd-box">
+              <div class="ttd-label">Mengetahui,</div>
+              <div class="ttd-city" id="rpt-kota1">Yogyakarta, <span id="ttd-tgl-1"></span></div>
+              <div class="ttd-space" id="rpt-ttd-space1"></div>
+              <div class="ttd-name" id="rpt-ttd1">Nama Klien / Atasan</div>
+              <div class="ttd-role" id="rpt-jab1">Jabatan</div>
+            </div>
+            <div class="ttd-box">
+              <div class="ttd-label">Yang membuat laporan,</div>
+              <div class="ttd-city" id="rpt-kota2">Yogyakarta, <span id="ttd-tgl-2"></span></div>
+              <div class="ttd-space" id="rpt-ttd-space2"></div>
+              <div class="ttd-name" id="rpt-ttd2">Nama Desainer</div>
+              <div class="ttd-role" id="rpt-jab2">Web &amp; Visual Designer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PROYEK ══ -->
+    <section id="proyek" class="page">
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="filter-row" id="prj-filter-row" style="margin:0"></div>
+        </div>
+        <button class="btn-primary" onclick="openModalPrj()" style="padding:9px 18px;font-size:13.5px;white-space:nowrap">
+          <svg viewBox="0 0 16 16" fill="none" style="width:13px;height:13px"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Buat Proyek
+        </button>
+      </div>
+      <div class="prj-grid" id="prj-grid"></div>
+    </section>
+
+    <!-- ══ PAPAN TUGAS / KANBAN ══ -->
+    <section id="kanban" class="page">
+      <div class="page-header">
+        <div class="kanban-filters">
+          <select id="kanban-filter-prj" onchange="renderKanban()">
+            <option value="all">Semua Proyek</option>
+          </select>
+          <select id="kanban-filter-user" onchange="renderKanban()">
+            <option value="all">Semua Anggota</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="openModalTask()" style="padding:9px 18px;font-size:13.5px;white-space:nowrap">
+          <svg viewBox="0 0 16 16" fill="none" style="width:13px;height:13px"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Buat Tugas
+        </button>
+      </div>
+
+      <div class="kanban-board">
+        <!-- TO DO -->
+        <div class="kanban-col">
+          <div class="kanban-col-header">
+            <div class="kanban-col-title">
+              <div class="kanban-col-dot dot-todo"></div>
+              To Do
+            </div>
+            <span class="kanban-count" id="count-todo">0</span>
+          </div>
+          <div class="kanban-cards" id="col-todo"
+            ondragover="dragOver(event)" ondragleave="dragLeave(event)"
+            ondrop="dropOn(event,'planning')">
+          </div>
+        </div>
+
+        <!-- IN PROGRESS -->
+        <div class="kanban-col">
+          <div class="kanban-col-header">
+            <div class="kanban-col-title">
+              <div class="kanban-col-dot dot-inprogress"></div>
+              In Progress
+            </div>
+            <span class="kanban-count" id="count-inprogress">0</span>
+          </div>
+          <div class="kanban-cards" id="col-inprogress"
+            ondragover="dragOver(event)" ondragleave="dragLeave(event)"
+            ondrop="dropOn(event,'proses')">
+          </div>
+        </div>
+
+        <!-- DONE -->
+        <div class="kanban-col">
+          <div class="kanban-col-header">
+            <div class="kanban-col-title">
+              <div class="kanban-col-dot dot-done"></div>
+              Done
+            </div>
+            <span class="kanban-count" id="count-done-col">0</span>
+          </div>
+          <div class="kanban-cards" id="col-done-col"
+            ondragover="dragOver(event)" ondragleave="dragLeave(event)"
+            ondrop="dropOn(event,'done')">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ CETAK PEMBAYARAN (INVOICE) ══ -->
+    <section id="invoice" class="page">
+      <!-- Sub-tabs -->
+      <div class="inv-tabs">
+        <button class="inv-tab active" id="inv-tab-list" onclick="setInvTab('list')">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Daftar Invoice
+        </button>
+        <button class="inv-tab" id="inv-tab-bayar" onclick="setInvTab('bayar')">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Status Pembayaran
+        </button>
+        <button class="inv-tab" id="inv-tab-rangkuman" onclick="setInvTab('rangkuman')">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 13l3-4 3 2 3-5 3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Rangkuman Pendapatan
+        </button>
+      </div>
+
+      <!-- ── TAB: DAFTAR INVOICE ── -->
+      <div class="inv-tabpane active" id="invpane-list">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="filter-row" id="inv-filter-status" style="margin:0"></div>
+          </div>
+          <button class="btn-primary" onclick="openModalInvoice()" style="padding:9px 18px;font-size:13.5px;white-space:nowrap">
+            <svg viewBox="0 0 16 16" fill="none" style="width:13px;height:13px"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Buat Invoice
+          </button>
+        </div>
+        <div class="inv-grid" id="inv-grid"></div>
+      </div>
+
+      <!-- ── TAB: STATUS PEMBAYARAN ── -->
+      <div class="inv-tabpane" id="invpane-bayar">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="filter-row" id="bayar-filter-status" style="margin:0"></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <table>
+            <thead><tr>
+              <th style="width:14%">No. Invoice</th>
+              <th style="width:20%">Klien</th>
+              <th style="width:14%">Tanggal Terbit</th>
+              <th style="width:14%">Jatuh Tempo</th>
+              <th style="width:14%">Total Tagihan</th>
+              <th style="width:12%">Status</th>
+              <th style="width:12%">Aksi</th>
+            </tr></thead>
+            <tbody id="bayar-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB: RANGKUMAN PENDAPATAN ── -->
+      <div class="inv-tabpane" id="invpane-rangkuman">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="filter-row" id="rangkuman-filter-tahun" style="margin:0"></div>
+          </div>
+        </div>
+        <div class="stat-grid" id="rangkuman-stat-grid"></div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title">
+              <svg viewBox="0 0 18 18" fill="none"><path d="M2 14l4-5 4 3 4-7 2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Pendapatan per Bulan
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:260px">
+            <canvas id="rangkuman-chart"></canvas>
+            <div class="chart-empty" id="rangkuman-chart-empty" style="display:none">
+              <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="30" width="8" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="20" y="20" width="8" height="22" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="34" y="12" width="8" height="30" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+              <p>Belum ada data pembayaran</p>
+            </div>
+          </div>
+        </div>
+        <div class="sec-title">Riwayat Pembayaran Masuk</div>
+        <div class="table-card">
+          <table>
+            <thead><tr>
+              <th style="width:16%">Tanggal Bayar</th>
+              <th style="width:16%">No. Invoice</th>
+              <th style="width:24%">Klien</th>
+              <th style="width:18%">Jumlah Diterima</th>
+              <th style="width:14%">Metode</th>
+              <th style="width:12%">Catatan</th>
+            </tr></thead>
+            <tbody id="riwayat-bayar-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content-wrapper -->
+</div><!-- /sb-main -->
+
+<!-- MODAL PROYEK -->
+<div class="modal-overlay" id="modal-prj">
+  <div class="modal modal-lg">
+    <div class="modal-title" id="modal-prj-title">Buat Proyek Baru</div>
+    <div class="form-group">
+      <label>Nama Proyek</label>
+      <input type="text" id="prj-inp-nama" placeholder="Contoh: Redesign Website Klien A">
+    </div>
+    <div class="form-group">
+      <label>Manager Proyek</label>
+      <select id="prj-inp-manager"><option value="">— Pilih Manager —</option></select>
+    </div>
+    <div class="form-group">
+      <label>Status Proyek</label>
+      <select id="prj-inp-status">
+        <option value="planning">📋 Planning</option>
+        <option value="proses">⚙️ Proses</option>
+        <option value="done">✅ Done</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Link Referensi (opsional)</label>
+      <input type="url" id="prj-inp-link" placeholder="https://...">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-prj')">Batal</button>
+      <button class="btn-primary" onclick="simpanPrj()" style="padding:9px 20px">
+        <svg viewBox="0 0 16 16" fill="none" style="width:13px;height:13px"><path d="M13 5l-6 6-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Simpan Proyek
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TUGAS -->
+<div class="modal-overlay" id="modal-task">
+  <div class="modal modal-lg">
+    <div class="modal-title" id="modal-task-title">Buat Tugas Baru</div>
+    <div class="form-group">
+      <label>Judul Tugas</label>
+      <input type="text" id="task-inp-judul" placeholder="Contoh: Buat wireframe halaman utama">
+    </div>
+    <div class="form-group">
+      <label>Deskripsi</label>
+      <textarea id="task-inp-deskripsi" placeholder="Deskripsi singkat tugas ini..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Proyek Terkait</label>
+        <select id="task-inp-project"><option value="">— Pilih Proyek —</option></select>
+      </div>
+      <div class="form-group">
+        <label>Assignee</label>
+        <select id="task-inp-assignee"><option value="">— Pilih Assignee —</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Status</label>
+        <select id="task-inp-status">
+          <option value="planning">📋 To Do (Planning)</option>
+          <option value="proses">⚙️ In Progress (Proses)</option>
+          <option value="done">✅ Done</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Link Referensi (opsional)</label>
+        <input type="url" id="task-inp-link" placeholder="https://...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-task')">Batal</button>
+      <button class="btn-primary" onclick="simpanTask()" style="padding:9px 20px">
+        <svg viewBox="0 0 16 16" fill="none" style="width:13px;height:13px"><path d="M13 5l-6 6-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Simpan Tugas
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HAPUS PEKERJAAN -->
+<div class="modal-overlay" id="modal-hapus">
+  <div class="modal">
+    <div class="modal-title">Hapus Pekerjaan?</div>
+    <p style="font-size:13.5px;color:var(--gray-600);line-height:1.6">Pekerjaan <strong id="hapus-target-nama"></strong> akan dihapus permanen.</p>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-hapus')">Batal</button>
+      <button class="btn-primary" onclick="confirmHapus()" style="padding:9px 20px;background:linear-gradient(135deg,#A32D2D,#C94040)">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BUAT/EDIT INVOICE -->
+<div class="modal-overlay" id="modal-invoice">
+  <div class="modal modal-lg" style="max-width:640px">
+    <div class="modal-title" id="modal-invoice-title">Buat Invoice Baru</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nama Klien</label>
+        <input type="text" id="inv-inp-klien" placeholder="Nama klien / perusahaan">
+      </div>
+      <div class="form-group">
+        <label>Email Klien (opsional)</label>
+        <input type="email" id="inv-inp-email" placeholder="klien@email.com">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tanggal Terbit</label>
+        <input type="date" id="inv-inp-tgl-terbit">
+      </div>
+      <div class="form-group">
+        <label>Jatuh Tempo</label>
+        <input type="date" id="inv-inp-jatuh-tempo">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Proyek Terkait (opsional)</label>
+      <select id="inv-inp-proyek"><option value="">— Tanpa Proyek —</option></select>
+    </div>
+
+    <!-- ITEM-ITEM INVOICE -->
+    <div class="form-group">
+      <label>Rincian Item</label>
+      <div id="inv-items-wrap"></div>
+      <button type="button" class="btn-cancel" onclick="tambahInvItem()" style="margin-top:8px;padding:7px 14px;font-size:12.5px">
+        <svg viewBox="0 0 16 16" fill="none" style="width:12px;height:12px;display:inline;vertical-align:-1px"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Tambah Item
+      </button>
+    </div>
+
+    <div class="inv-total-row">
+      <span>Total Tagihan</span>
+      <span id="inv-total-display">Rp 0</span>
+    </div>
+
+    <div class="form-group">
+      <label>Catatan (opsional)</label>
+      <textarea id="inv-inp-catatan" placeholder="Catatan tambahan untuk klien..." style="min-height:60px"></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-invoice')">Batal</button>
+      <button class="btn-primary" onclick="simpanInvoice()" style="padding:9px 20px">
+        <svg viewBox="0 0 16 16" fill="none" style="width:13px;height:13px"><path d="M13 5l-6 6-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Simpan Invoice
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CATAT PEMBAYARAN MASUK -->
+<div class="modal-overlay" id="modal-bayar">
+  <div class="modal">
+    <div class="modal-title">Catat Pembayaran Masuk</div>
+    <div class="inv-bayar-info" id="bayar-info-box"></div>
+    <div class="form-group">
+      <label>Tanggal Bayar</label>
+      <input type="date" id="bayar-inp-tgl">
+    </div>
+    <div class="form-group">
+      <label>Jumlah Diterima (Rp)</label>
+      <input type="number" id="bayar-inp-jumlah" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label>Metode Pembayaran</label>
+      <select id="bayar-inp-metode">
+        <option value="Transfer Bank">🏦 Transfer Bank</option>
+        <option value="Tunai">💵 Tunai</option>
+        <option value="E-Wallet">📱 E-Wallet</option>
+        <option value="Lainnya">📋 Lainnya</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Catatan (opsional)</label>
+      <input type="text" id="bayar-inp-catatan" placeholder="Contoh: DP 50%, Pelunasan, dll">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-bayar')">Batal</button>
+      <button class="btn-primary" onclick="simpanPembayaran()" style="padding:9px 20px">
+        <svg viewBox="0 0 16 16" fill="none" style="width:13px;height:13px"><path d="M13 5l-6 6-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Catat Pembayaran
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HAPUS INVOICE -->
+<div class="modal-overlay" id="modal-hapus-invoice">
+  <div class="modal">
+    <div class="modal-title">Hapus Invoice?</div>
+    <p style="font-size:13.5px;color:var(--gray-600);line-height:1.6">Invoice <strong id="hapus-inv-nomor"></strong> akan dihapus permanen beserta riwayat pembayarannya.</p>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-hapus-invoice')">Batal</button>
+      <button class="btn-primary" onclick="confirmHapusInvoice()" style="padding:9px 20px;background:linear-gradient(135deg,#A32D2D,#C94040)">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PREVIEW / KIRIM INVOICE -->
+<div class="modal-overlay" id="modal-preview-invoice">
+  <div class="modal modal-lg" style="max-width:680px">
+    <div class="modal-title">Pratinjau Invoice</div>
+    <div id="invoice-preview-content" class="invoice-print-area"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-preview-invoice')">Tutup</button>
+      <button class="btn-cancel" onclick="kirimInvoiceEmail()" style="background:#E1F5EE;color:#085041;border-color:#5DCAA5">
+        <svg viewBox="0 0 16 16" fill="none" style="width:13px;height:13px;display:inline;vertical-align:-2px"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M2 4l6 5 6-5" stroke="currentColor" stroke-width="1.4"/></svg>
+        Kirim via Email
+      </button>
+      <button class="btn-primary" onclick="cetakInvoicePDF()" style="padding:9px 20px">
+        <svg viewBox="0 0 16 16" fill="none" style="width:13px;height:13px"><rect x="3" y="5" width="10" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M5 5V3a1 1 0 011-1h4a1 1 0 011 1v2" stroke="currentColor" stroke-width="1.5"/></svg>
+        Cetak PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="api.js"></script>
+<script src="app.js"></script>
+<script src="projects.js"></script>
+<script src="invoice.js"></script>
+<script src="sidebar.js"></script>
+</body>
+</html>
