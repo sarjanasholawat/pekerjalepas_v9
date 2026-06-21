@@ -812,21 +812,22 @@ function renderRow(j) {
   // Jam kerja: prioritaskan jam WIB, fallback ke durasi
   const mulaiStr   = parseJam(j.wibMulai);
   const selesaiStr = parseJam(j.wibSelesai);
-  let jamStr, jamStyle = '';
+  let jamStr, jamStyle = '', jamTitle = '';
   if (mulaiStr && selesaiStr) {
     jamStr = `${mulaiStr} – ${selesaiStr}`;
   } else if (mulaiStr) {
     jamStr = `${mulaiStr} – (belum)`;
   } else {
-    jamStr  = fmtSec(j.durasi || 0);
-    jamStyle= 'color:var(--gray-400);font-size:11px';
+    jamStr   = fmtSec(j.durasi || 0);
+    jamStyle = 'color:var(--gray-400);font-size:11px';
+    jamTitle = 'title="Jam belum tercatat — klik Edit untuk mengisi Jam Mulai/Selesai"';
   }
 
   return `<tr>
     <td title="${j.nama}">${j.nama}</td>
     <td>${katBadge(j.kategori)}</td>
     <td>${fmtTgl(j.tgl)}</td>
-    <td style="font-family:var(--mono);font-size:12px;white-space:nowrap;${jamStyle}">${jamStr}</td>
+    <td style="font-family:var(--mono);font-size:12px;white-space:nowrap;${jamStyle}" ${jamTitle}>${jamStr}</td>
     <td style="font-family:var(--mono);font-size:12px">${fmtSec(j.durasi)}</td>
     <td style="font-size:12px;white-space:nowrap">${tempatStr}</td>
     <td>${actionBtns(j.id)}</td>
