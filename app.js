@@ -793,24 +793,15 @@ function actionBtns(id) {
     <button class="btn-icon danger" onclick="openHapus('${id}')" title="Hapus"><svg viewBox="0 0 16 16" fill="none"><path d="M3 5h10M6 5V3h4v2M6 8v5M10 8v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
   </div>`;
 }
-// Normalize jam ke format HH:MM WIB — handle ISO string, HH:MM, atau nilai aneh
+// Normalize jam ke format HH:MM — HANYA terima format HH:MM/HH:MM:SS yang valid
+// Data lama yang tersimpan sebagai ISO string (dari bug versi sebelumnya) sudah korup
+// dan tidak bisa direkonstruksi dengan benar — lebih baik dianggap kosong daripada
+// menampilkan jam yang salah dengan percaya diri.
 function parseJam(val) {
   if (!val) return '';
   const s = String(val).trim();
-  // Sudah format HH:MM atau HH:MM:SS — langsung pakai
   if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(s)) return s.slice(0, 5);
-  // ISO string — konversi ke WIB (UTC+7)
-  try {
-    const d = new Date(s);
-    if (!isNaN(d)) {
-      const wibMs = d.getTime() + 7 * 3600000;
-      const wib   = new Date(wibMs);
-      const h = String(wib.getUTCHours()).padStart(2,'0');
-      const m = String(wib.getUTCMinutes()).padStart(2,'0');
-      return `${h}:${m}`;
-    }
-  } catch(_) {}
-  return '';
+  return ''; // format tidak dikenali (misal ISO string lama) — kosongkan
 }
 
 function renderRow(j) {
