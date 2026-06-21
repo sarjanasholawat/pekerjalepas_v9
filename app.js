@@ -598,9 +598,13 @@ async function savePekerjaan() {
     // Mode WIB: ambil dari hidden input yang diisi tombol/input manual
     wibMulai   = document.getElementById('wib-mulai')?.value   || '';
     wibSelesai = document.getElementById('wib-selesai')?.value || '';
+  } else if (timerMode === 'stopwatch' && durasi > 0) {
+    // Mode Stopwatch: hitung jam WIB akurat — selesai = sekarang, mulai = selesai - durasi
+    const wibSelesaiDate = getWIBNow();
+    const wibMulaiDate   = new Date(wibSelesaiDate.getTime() - durasi * 1000);
+    wibSelesai = wibStr(wibSelesaiDate);
+    wibMulai   = wibStr(wibMulaiDate);
   }
-  // Mode stopwatch: biarkan wibMulai/wibSelesai kosong,
-  // tampilkan durasi saja di laporan (lebih akurat dari rekayasa jam)
   const job = {
     id: currentEditId || ('JOB_' + Date.now()),
     userId: plSession.id,
