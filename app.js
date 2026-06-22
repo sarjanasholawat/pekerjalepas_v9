@@ -464,9 +464,23 @@ function migrasiJam(jobsList) {
     const rawTempat = j.tempat || j.tahun || '';
     let tempat = String(rawTempat).trim();
     if (!tempatValid.includes(tempat)) tempat = 'Dirumah';
-    // Normalisasi wibMulai/wibSelesai: konversi ISO string ke HH:MM
-    const wibMulai   = parseJam(j.wibMulai);
-    const wibSelesai = parseJam(j.wibSelesai);
+
+    // Normalisasi jam: ambil yang valid (HH:MM format)
+    let wibMulai   = parseJam(j.wibMulai);
+    let wibSelesai = parseJam(j.wibSelesai);
+
+    // Jika masih kosong (data lama), hitung dari createdAt + durasi
+    if (!wibMulai && !wibSelesai && j.durasi > 0 && j.createdAt) {
+      try {
+        const selesaiDate = new Date(j.createdAt);
+        if (!isNaN(selesaiDate)) {
+          const mulaiDate = new Date(selesaiDate.getTime() - (j.durasi * 1000));
+          wibSelesai = wibStr(selesaiDate);
+          wibMulai   = wibStr(mulaiDate);
+        }
+      } catch(_) {}
+    }
+
     return { ...j, tempat, wibMulai, wibSelesai };
   });
 }
@@ -505,11 +519,23 @@ async function loadJobs() {
   jobs = raw.map(j => {
     const rawTempat = j.tempat || j.tahun || '';
     const tempat = ['Dirumah', 'DiKantor'].includes(String(rawTempat).trim())
-      ? String(rawTempat).trim()
-      : 'Dirumah';
-    // Normalisasi wibMulai/wibSelesai ke HH:MM (handle ISO string lama)
-    const wibMulai   = parseJam(j.wibMulai);
-    const wibSelesai = parseJam(j.wibSelesai);
+      ? String(rawTempat).trim() : 'Dirumah';
+
+    let wibMulai   = parseJam(j.wibMulai);
+    let wibSelesai = parseJam(j.wibSelesai);
+
+    // Jika masih kosong (data lama tanpa jam), hitung dari createdAt + durasi
+    if (!wibMulai && !wibSelesai && j.durasi > 0 && j.createdAt) {
+      try {
+        const selesaiDate = new Date(j.createdAt);
+        if (!isNaN(selesaiDate)) {
+          const mulaiDate = new Date(selesaiDate.getTime() - (j.durasi * 1000));
+          wibSelesai = wibStr(selesaiDate);
+          wibMulai   = wibStr(mulaiDate);
+        }
+      } catch(_) {}
+    }
+
     return { ...j, tempat, wibMulai, wibSelesai };
   });
 
