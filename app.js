@@ -458,31 +458,58 @@ function saveJobsLocal(jobsList) {
 }
 
 // ── Migrasi HANYA untuk data lama yang belum punya field baru ──
+// ── Hitung wibMulai/wibSelesai dari waktu selesai dan durasi ──
+function hitungJamWIB(selesaiMs, durasiDetik) {
+  try {
+    const selesaiDate = new Date(selesaiMs);
+    if (isNaN(selesaiDate)) return { wibMulai:'', wibSelesai:'' };
+    const mulaiDate = new Date(selesaiDate.getTime() - durasiDetik * 1000);
+    return {
+      wibMulai:   wibStr(mulaiDate),
+      wibSelesai: wibStr(selesaiDate),
+    };
+  } catch(_) {
+    return { wibMulai:'', wibSelesai:'' };
+  }
+}
+
 function migrasiJam(jobsList) {
   const tempatValid = ['Dirumah', 'DiKantor'];
-  return jobsList.map(j => {
+  let changed = false;
+
+  const result = jobsList.map(j => {
+    // Normalisasi tempat
     const rawTempat = j.tempat || j.tahun || '';
     let tempat = String(rawTempat).trim();
     if (!tempatValid.includes(tempat)) tempat = 'Dirumah';
 
-    // Normalisasi jam: ambil yang valid (HH:MM format)
+    // Normalisasi jam
     let wibMulai   = parseJam(j.wibMulai);
     let wibSelesai = parseJam(j.wibSelesai);
 
-    // Jika masih kosong (data lama), hitung dari createdAt + durasi
-    if (!wibMulai && !wibSelesai && j.durasi > 0 && j.createdAt) {
-      try {
-        const selesaiDate = new Date(j.createdAt);
-        if (!isNaN(selesaiDate)) {
-          const mulaiDate = new Date(selesaiDate.getTime() - (j.durasi * 1000));
-          wibSelesai = wibStr(selesaiDate);
-          wibMulai   = wibStr(mulaiDate);
-        }
-      } catch(_) {}
+    // Jika jam masih kosong → hitung dari waktu simpan
+    if ((!wibMulai || !wibSelesai) && (j.durasi > 0)) {
+      // Gunakan createdAt jika ada, fallback ke Date.now()
+      const selesaiMs = j.createdAt
+        ? new Date(j.createdAt).getTime() || Date.now()
+        : Date.now();
+      const hasil = hitungJamWIB(selesaiMs, j.durasi);
+      if (hasil.wibMulai) {
+        wibMulai   = hasil.wibMulai;
+        wibSelesai = hasil.wibSelesai;
+        changed = true;
+      }
     }
 
     return { ...j, tempat, wibMulai, wibSelesai };
   });
+
+  // Simpan hasil migrasi ke localStorage agar tidak dihitung ulang setiap kali
+  if (changed) {
+    try { localStorage.setItem(LOCAL_JOBS_KEY(), JSON.stringify(result)); } catch(_) {}
+  }
+
+  return result;
 }
 
 // ── Load jobs ──
@@ -513,31 +540,9 @@ async function loadJobs() {
     } catch(_) {}
   }
 
-  // Fallback localStorage — baca langsung, hanya normalisasi tempat
+  // Fallback localStorage — pakai migrasiJam yang sudah robust
   const raw = JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY()) || '[]');
-
-  jobs = raw.map(j => {
-    const rawTempat = j.tempat || j.tahun || '';
-    const tempat = ['Dirumah', 'DiKantor'].includes(String(rawTempat).trim())
-      ? String(rawTempat).trim() : 'Dirumah';
-
-    let wibMulai   = parseJam(j.wibMulai);
-    let wibSelesai = parseJam(j.wibSelesai);
-
-    // Jika masih kosong (data lama tanpa jam), hitung dari createdAt + durasi
-    if (!wibMulai && !wibSelesai && j.durasi > 0 && j.createdAt) {
-      try {
-        const selesaiDate = new Date(j.createdAt);
-        if (!isNaN(selesaiDate)) {
-          const mulaiDate = new Date(selesaiDate.getTime() - (j.durasi * 1000));
-          wibSelesai = wibStr(selesaiDate);
-          wibMulai   = wibStr(mulaiDate);
-        }
-      } catch(_) {}
-    }
-
-    return { ...j, tempat, wibMulai, wibSelesai };
-  });
+  jobs = migrasiJam(raw); // migrasiJam sudah saveJobsLocal jika ada perubahan
 
   renderDash();
   renderPekList();
