@@ -537,73 +537,57 @@ function hitungJamWIB(selesaiMs, durasiDetik) {
 
 function migrasiJam(jobsList) {
   const tempatValid = ['Dirumah', 'DiKantor'];
-  let changed = false;
 
-  const result = jobsList.map(j => {
+  return jobsList.map(j => {
     // Normalisasi tempat
     const rawTempat = j.tempat || j.tahun || '';
     let tempat = String(rawTempat).trim();
     if (!tempatValid.includes(tempat)) tempat = 'Dirumah';
 
-    // Normalisasi jam
-    let wibMulai   = parseJam(j.wibMulai);
-    let wibSelesai = parseJam(j.wibSelesai);
-
-    // Jika jam masih kosong → hitung dari waktu simpan
-    if ((!wibMulai || !wibSelesai) && (j.durasi > 0)) {
-      // Gunakan createdAt jika ada, fallback ke Date.now()
-      const selesaiMs = j.createdAt
-        ? new Date(j.createdAt).getTime() || Date.now()
-        : Date.now();
-      const hasil = hitungJamWIB(selesaiMs, j.durasi);
-      if (hasil.wibMulai) {
-        wibMulai   = hasil.wibMulai;
-        wibSelesai = hasil.wibSelesai;
-        changed = true;
-      }
-    }
+    // Normalisasi jam — hanya bersihkan format, TIDAK menebak dari createdAt
+    // (penghitungan otomatis dari createdAt tidak akurat dan menyebabkan jam salah)
+    const wibMulai   = parseJam(j.wibMulai);
+    const wibSelesai = parseJam(j.wibSelesai);
 
     return { ...j, tempat, wibMulai, wibSelesai };
   });
-
-  // Simpan hasil migrasi ke localStorage agar tidak dihitung ulang setiap kali
-  if (changed) {
-    try { localStorage.setItem(LOCAL_JOBS_KEY(), JSON.stringify(result)); } catch(_) {}
-  }
-
-  return result;
 }
 
 // ── Load jobs ──
 async function loadJobs() {
+  // localStorage adalah sumber kebenaran utama untuk wibMulai/wibSelesai
+  // karena Google Sheets selalu merusak format waktu
+  const localRaw = JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY()) || '[]');
+
   const apiReady = typeof API_URL !== 'undefined' && !API_URL.includes('GANTI_DENGAN');
 
   if (apiReady) {
     try {
       const res = await API.getJobs(plSession.id);
       if (res.success && res.data) {
-        const local    = JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY()) || '[]');
-        const localMap = {};
-        local.forEach(j => { 
-          localMap[String(j.id)] = j; 
-          localMap[`${j.nama}_${j.tgl}_${j.durasi}`] = j; // Fallback jika ID diubah server
+        // Buat peta localStorage berdasarkan ID dan nama+tgl (fallback)
+        const localById  = {};
+        const localByKey = {};
+        localRaw.forEach(j => {
+          localById[String(j.id)] = j;
+          // Kunci fallback: nama+tanggal (cukup unik untuk satu user)
+          const key = `${String(j.nama).trim()}_${j.tgl}`;
+          if (!localByKey[key]) localByKey[key] = j; // simpan yang pertama
         });
+
         jobs = migrasiJam(res.data.map(j => {
-          const loc = localMap[String(j.id)] || localMap[`${j.nama}_${j.tgl}_${j.durasi}`] || {};
-          
-          let apiMulai   = j.wibMulai || '';
-          let apiSelesai = j.wibSelesai || '';
-          
-          // Abaikan format korup (Date timezone bug) dari API lama
-          if (String(apiMulai).startsWith('1899-') || String(apiMulai).includes('T')) apiMulai = '';
-          if (String(apiSelesai).startsWith('1899-') || String(apiSelesai).includes('T')) apiSelesai = '';
-          
+          // Cari data lokal berdasarkan ID dulu, lalu fallback nama+tgl
+          const key = `${String(j.nama).trim()}_${j.tgl}`;
+          const loc = localById[String(j.id)] || localByKey[key] || {};
+
           return {
             ...j,
-            wibMulai:   apiMulai   || loc.wibMulai   || '',
-            wibSelesai: apiSelesai || loc.wibSelesai || '',
-            tempat:     j.tempat      || loc.tempat      || 'Dirumah',
-            kategori:   j.kategori   || loc.kategori   || '',
+            // SELALU gunakan wibMulai/wibSelesai dari localStorage
+            // API/Google Sheets tidak bisa dipercaya untuk menyimpan format waktu
+            wibMulai:   loc.wibMulai   || '',
+            wibSelesai: loc.wibSelesai || '',
+            tempat:     loc.tempat   || j.tempat   || 'Dirumah',
+            kategori:   loc.kategori || j.kategori || '',
           };
         }));
         saveJobsLocal(jobs);
@@ -613,10 +597,8 @@ async function loadJobs() {
     } catch(_) {}
   }
 
-  // Fallback localStorage — pakai migrasiJam yang sudah robust
-  const raw = JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY()) || '[]');
-  jobs = migrasiJam(raw); // migrasiJam sudah saveJobsLocal jika ada perubahan
-
+  // Fallback: hanya pakai localStorage
+  jobs = migrasiJam(localRaw);
   renderDash();
   renderPekList();
   updateKategoriFilter();
