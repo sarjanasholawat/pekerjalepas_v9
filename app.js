@@ -922,13 +922,13 @@ function renderRow(j) {
   const selesaiStr = parseJam(j.wibSelesai);
   let jamStr, jamStyle = '', jamTitle = '';
   if (mulaiStr && selesaiStr) {
-    jamStr = `${mulaiStr} – ${selesaiStr}`;
+    jamStr = `${mulaiStr} - ${selesaiStr} WIB`;
   } else if (mulaiStr) {
-    jamStr = `${mulaiStr} – (belum)`;
+    jamStr = `${mulaiStr} - (belum) WIB`;
   } else {
     jamStr   = fmtSec(j.durasi || 0);
     jamStyle = 'color:var(--gray-400);font-size:11px';
-    jamTitle = 'title="Jam belum tercatat — klik Edit untuk mengisi Jam Mulai/Selesai"';
+    jamTitle = 'title="Jam belum tercatat - klik Edit untuk mengisi Jam Mulai/Selesai"';
   }
 
   return `<tr>
@@ -1235,8 +1235,8 @@ function renderLaporan() {
         const jamMulai   = parseJam(j.wibMulai);
         const jamSelesai = parseJam(j.wibSelesai);
         const jamStr     = (jamMulai && jamSelesai)
-          ? `${jamMulai} – ${jamSelesai}`
-          : jamMulai ? `${jamMulai} – ...` : fmtSec(durSec);
+          ? `${jamMulai} - ${jamSelesai} WIB`
+          : jamMulai ? `${jamMulai} - ... WIB` : fmtSec(durSec);
         const tIcon      = TEMPAT_ICON[j.tempat]  || '';
         const tLabel     = TEMPAT_LABEL[j.tempat] || j.tempat || '—';
         return `<tr>
