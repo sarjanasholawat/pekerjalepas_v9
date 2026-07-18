@@ -10,12 +10,17 @@ if (!plSession) { window.location.href = 'login.html'; }
 else if (plSession.role === 'admin') { window.location.href = 'admin.html'; }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Sidebar & topbar user info
+  // ── Terapkan tema yang disimpan admin ──
+  const savedTema = localStorage.getItem('pl_tema');
+  if (savedTema) document.body.classList.add(savedTema);
+
+  // ── User info + Avatar ──
   function initials(n){ return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
   if (plSession) {
-    const av = initials(plSession.nama);
-    ['sb-avatar','topbar-avatar'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=av; });
-    ['sb-user-name','topbar-name','user-display-name'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=plSession.nama; });
+    loadAvatar();
+    ['sb-user-name','topbar-name','user-display-name'].forEach(id => {
+      const el = document.getElementById(id); if(el) el.textContent = plSession.nama;
+    });
   }
 
   // Init form dan data
@@ -24,6 +29,50 @@ document.addEventListener('DOMContentLoaded', () => {
   populateProyekDropdown();
 });
 function doLogout() { sessionStorage.removeItem('pl_session'); window.location.href = 'login.html'; }
+
+// ==================== AVATAR PROFIL ====================
+const AVATAR_KEY = () => `pl_avatar_u${plSession?.id || 'x'}`;
+
+function loadAvatar() {
+  const saved = localStorage.getItem(AVATAR_KEY());
+  const initials = n => n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const inisial  = plSession ? initials(plSession.nama) : '—';
+
+  ['sb-avatar','topbar-avatar'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (saved) {
+      el.innerHTML = `<img src="${saved}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+      el.style.padding = '0';
+      el.style.background = 'none';
+    } else {
+      el.textContent  = inisial;
+      el.style.padding = '';
+      el.style.background = '';
+    }
+  });
+}
+
+function bukaGantiAvatar() {
+  const input = document.getElementById('avatar-input');
+  if (input) input.click();
+}
+
+function gantiAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    showToast('Ukuran foto maksimal 2MB', 'error'); return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    localStorage.setItem(AVATAR_KEY(), e.target.result);
+    loadAvatar();
+    showToast('Foto profil berhasil diperbarui!');
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
 
 // ==================== KONSTANTA ====================
 const HARI  = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
@@ -834,9 +883,25 @@ function actionBtns(id) {
 // menampilkan jam yang salah dengan percaya diri.
 function parseJam(val) {
   if (!val) return '';
-  const s = String(val).trim();
-  if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(s)) return s.slice(0, 5);
-  return ''; // format tidak dikenali (misal ISO string lama) — kosongkan
+  let s = String(val).trim();
+  if (s.startsWith("'")) s = s.substring(1).trim();
+  
+  if (s.includes('T') && s.includes('Z')) {
+    try {
+      const d = new Date(s);
+      if (!isNaN(d)) return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0');
+    } catch(e){}
+  }
+  
+  const m = s.match(/(\d{1,2}):(\d{2})/);
+  if (m) {
+    let h = parseInt(m[1], 10);
+    const min = m[2];
+    if (s.toLowerCase().includes('pm') && h < 12) h += 12;
+    if (s.toLowerCase().includes('am') && h === 12) h = 0;
+    return String(h).padStart(2, '0') + ':' + min;
+  }
+  return '';
 }
 
 function renderRow(j) {
