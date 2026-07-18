@@ -571,9 +571,12 @@ async function loadJobs() {
       if (res.success && res.data) {
         const local    = JSON.parse(localStorage.getItem(LOCAL_JOBS_KEY()) || '[]');
         const localMap = {};
-        local.forEach(j => { localMap[String(j.id)] = j; });
+        local.forEach(j => { 
+          localMap[String(j.id)] = j; 
+          localMap[`${j.nama}_${j.tgl}_${j.durasi}`] = j; // Fallback jika ID diubah server
+        });
         jobs = migrasiJam(res.data.map(j => {
-          const loc = localMap[String(j.id)] || {};
+          const loc = localMap[String(j.id)] || localMap[`${j.nama}_${j.tgl}_${j.durasi}`] || {};
           
           let apiMulai   = j.wibMulai || '';
           let apiSelesai = j.wibSelesai || '';
