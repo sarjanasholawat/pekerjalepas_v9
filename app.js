@@ -392,7 +392,20 @@ function getDurasi() {
   // WIB mode: hitung dari hidden input (terisi oleh tombol atau input manual)
   const mulai   = document.getElementById('wib-mulai')?.value   || '';
   const selesai = document.getElementById('wib-selesai')?.value || '';
-  if (!mulai) return 0;
+  if (!mulai) {
+    // Fallback: baca langsung dari input time jika hidden field belum terisi
+    const inputMulai   = document.getElementById('wib-mulai-time')?.value || '';
+    const inputSelesai = document.getElementById('wib-selesai-time')?.value || '';
+    if (!inputMulai) return 0;
+    const [mhI, mmI] = inputMulai.split(':').map(Number);
+    if (inputSelesai) {
+      const [shI, smI] = inputSelesai.split(':').map(Number);
+      let diffI = (shI * 60 + smI) - (mhI * 60 + mmI);
+      if (diffI < 0) diffI += 24 * 60;
+      return diffI * 60;
+    }
+    return 0;
+  }
   const [mh, mm] = mulai.split(':').map(Number);
   if (selesai) {
     const [sh, sm] = selesai.split(':').map(Number);
@@ -682,15 +695,13 @@ async function savePekerjaan() {
   let wibMulai = '', wibSelesai = '';
 
   if (currentEditId) {
-    // Edit: ambil dari input jam mulai/selesai yang baru (bisa diubah user)
     wibMulai   = document.getElementById('edit-wib-mulai')?.value   || '';
     wibSelesai = document.getElementById('edit-wib-selesai')?.value || '';
   } else if (timerMode === 'wib') {
-    // Mode WIB: ambil dari hidden input yang diisi tombol/input manual
-    wibMulai   = document.getElementById('wib-mulai')?.value   || '';
-    wibSelesai = document.getElementById('wib-selesai')?.value || '';
+    // Prioritaskan hidden field, fallback ke input time jika hidden belum terisi
+    wibMulai   = document.getElementById('wib-mulai')?.value   || document.getElementById('wib-mulai-time')?.value   || '';
+    wibSelesai = document.getElementById('wib-selesai')?.value || document.getElementById('wib-selesai-time')?.value || '';
   } else if (timerMode === 'stopwatch' && durasi > 0) {
-    // Mode Stopwatch: hitung jam WIB akurat — selesai = sekarang, mulai = selesai - durasi
     const wibSelesaiDate = getWIBNow();
     const wibMulaiDate   = new Date(wibSelesaiDate.getTime() - durasi * 1000);
     wibSelesai = wibStr(wibSelesaiDate);
