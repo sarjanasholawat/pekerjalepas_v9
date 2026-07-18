@@ -42,10 +42,19 @@ function getSheet(name) {
 function getAllRows(sheetName) {
   const sheet = getSheet(sheetName);
   const data  = sheet.getDataRange().getValues();
+  const disp  = sheet.getDataRange().getDisplayValues();
   if (data.length <= 1) return [];
   const headers = data[0];
-  return data.slice(1).filter(row=>row[0]!==''&&row[0]!==null).map(row=>{
-    const obj={}; headers.forEach((h,i)=>obj[String(h)]=row[i]); return obj;
+  return data.slice(1).filter(row=>row[0]!==''&&row[0]!==null).map((row, rowIdx)=>{
+    const obj={}; 
+    headers.forEach((h,i)=> {
+      if (h === 'wibMulai' || h === 'wibSelesai') {
+        obj[String(h)] = disp[rowIdx + 1][i];
+      } else {
+        obj[String(h)] = row[i];
+      }
+    }); 
+    return obj;
   });
 }
 
@@ -153,7 +162,9 @@ function saveJob(body) {
   const{userId,nama,tgl,hari,tempat,durasi,status,kategori,wibMulai,wibSelesai}=body;
   if(!userId||!nama||!tgl||!durasi) return {success:false,error:'Field tidak lengkap.'};
   const id='JOB_'+Date.now();
-  getSheet(SHEET_PEKERJAAN).appendRow([id,userId,nama,tgl,hari,tempat||'Dirumah',parseInt(durasi),status||'selesai',kategori||'',wibMulai||'',wibSelesai||'',new Date().toISOString()]);
+  const wMulai = wibMulai ? "'" + wibMulai : "";
+  const wSelesai = wibSelesai ? "'" + wibSelesai : "";
+  getSheet(SHEET_PEKERJAAN).appendRow([id,userId,nama,tgl,hari,tempat||'Dirumah',parseInt(durasi),status||'selesai',kategori||'',wMulai,wSelesai,new Date().toISOString()]);
   return {success:true,id};
 }
 
