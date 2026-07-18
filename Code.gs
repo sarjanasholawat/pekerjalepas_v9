@@ -44,12 +44,20 @@ function getAllRows(sheetName) {
   const data  = sheet.getDataRange().getValues();
   const disp  = sheet.getDataRange().getDisplayValues();
   if (data.length <= 1) return [];
-  const headers = data[0];
+  
+  let headers = data[0];
+  // Auto-patch missing headers for old sheets
+  if (sheetName === 'Pekerjaan' && (!headers.includes('wibMulai') || headers.length < 12)) {
+    headers = ['id','userId','nama','tgl','hari','tempat','durasi','status','kategori','wibMulai','wibSelesai','createdAt'];
+    // Update the sheet headers visually
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  }
+
   return data.slice(1).filter(row=>row[0]!==''&&row[0]!==null).map((row, rowIdx)=>{
     const obj={}; 
     headers.forEach((h,i)=> {
       if (h === 'wibMulai' || h === 'wibSelesai') {
-        obj[String(h)] = disp[rowIdx + 1][i];
+        obj[String(h)] = disp[rowIdx + 1][i] || row[i] || '';
       } else {
         obj[String(h)] = row[i];
       }
