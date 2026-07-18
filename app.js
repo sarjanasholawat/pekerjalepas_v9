@@ -574,10 +574,18 @@ async function loadJobs() {
         local.forEach(j => { localMap[String(j.id)] = j; });
         jobs = migrasiJam(res.data.map(j => {
           const loc = localMap[String(j.id)] || {};
+          
+          let apiMulai   = j.wibMulai || '';
+          let apiSelesai = j.wibSelesai || '';
+          
+          // Abaikan format korup (Date timezone bug) dari API lama
+          if (String(apiMulai).startsWith('1899-') || String(apiMulai).includes('T')) apiMulai = '';
+          if (String(apiSelesai).startsWith('1899-') || String(apiSelesai).includes('T')) apiSelesai = '';
+          
           return {
             ...j,
-            wibMulai:   j.wibMulai   || loc.wibMulai   || '',
-            wibSelesai: j.wibSelesai || loc.wibSelesai || '',
+            wibMulai:   apiMulai   || loc.wibMulai   || '',
+            wibSelesai: apiSelesai || loc.wibSelesai || '',
             tempat:     j.tempat      || loc.tempat      || 'Dirumah',
             kategori:   j.kategori   || loc.kategori   || '',
           };
