@@ -580,12 +580,18 @@ async function loadJobs() {
           const key = `${String(j.nama).trim()}_${j.tgl}`;
           const loc = localById[String(j.id)] || localByKey[key] || {};
 
+          let apiMulai   = j.wibMulai || '';
+          let apiSelesai = j.wibSelesai || '';
+          
+          // Abaikan format korup (Date timezone bug) dari API lama
+          if (String(apiMulai).startsWith('1899-') || String(apiMulai).includes('T')) apiMulai = '';
+          if (String(apiSelesai).startsWith('1899-') || String(apiSelesai).includes('T')) apiSelesai = '';
+
           return {
             ...j,
-            // SELALU gunakan wibMulai/wibSelesai dari localStorage
-            // API/Google Sheets tidak bisa dipercaya untuk menyimpan format waktu
-            wibMulai:   loc.wibMulai   || '',
-            wibSelesai: loc.wibSelesai || '',
+            // Prioritaskan localStorage, fallback ke API jika API valid
+            wibMulai:   loc.wibMulai   || apiMulai   || '',
+            wibSelesai: loc.wibSelesai || apiSelesai || '',
             tempat:     loc.tempat   || j.tempat   || 'Dirumah',
             kategori:   loc.kategori || j.kategori || '',
           };
