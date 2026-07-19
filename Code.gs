@@ -10,9 +10,10 @@ function doGet(e)  { return route(e); }
 function doPost(e) { return route(e); }
 
 function route(e) {
+  if (!e) return ContentService.createTextOutput(JSON.stringify({success:false,error:'Tidak ada parameter. Jalankan via URL Web App, bukan dari editor.'})).setMimeType(ContentService.MimeType.JSON);
   let body = {};
   try { if (e.postData && e.postData.contents) body = JSON.parse(e.postData.contents); } catch(_){}
-  const action = e.parameter.action || body.action || '';
+  const action = (e.parameter && e.parameter.action) || body.action || '';
   let result;
   try {
     switch(action) {
@@ -47,8 +48,8 @@ function getAllRows(sheetName) {
   
   let headers = data[0];
   // Auto-patch missing headers for old sheets
-  if (sheetName === 'Pekerjaan' && (!headers.includes('wibMulai') || headers.length < 12)) {
-    headers = ['id','userId','nama','tgl','hari','tempat','durasi','status','kategori','wibMulai','wibSelesai','createdAt'];
+  if (sheetName === 'Pekerjaan' && (!headers.includes('jam') || headers.length < 13)) {
+    headers = ['id','userId','nama','tgl','hari','tempat','durasi','status','kategori','wibMulai','wibSelesai','jam','createdAt'];
     // Update the sheet headers visually
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   }
@@ -89,10 +90,10 @@ function initSheets() {
   let pk = ss.getSheetByName(SHEET_PEKERJAAN);
   if (!pk) {
     pk = ss.insertSheet(SHEET_PEKERJAAN);
-    // kolom ke-9 = kategori (baru)
-    pk.appendRow(['id','userId','nama','tgl','hari','tempat','durasi','status','kategori','wibMulai','wibSelesai','createdAt']);
-    pk.getRange(1,1,1,12).setFontWeight('bold').setBackground('#1a6fca').setFontColor('#FFF');
-    [150,120,220,100,90,70,80,90,130,80,80,180].forEach((w,i)=>pk.setColumnWidth(i+1,w));
+    pk.appendRow(['id','userId','nama','tgl','hari','tempat','durasi','status','kategori','wibMulai','wibSelesai','jam','createdAt']);
+    pk.setFrozenRows(1);
+    pk.getRange(1,1,1,13).setFontWeight('bold').setBackground('#1a6fca').setFontColor('#FFF');
+    [150,120,220,100,90,70,80,90,130,80,80,80,180].forEach((w,i)=>pk.setColumnWidth(i+1,w));
   }
 
   return {success:true,message:'Sheet berhasil dibuat! Akun: admin/admin123, user1/user123, user2/user456.'};
@@ -168,11 +169,16 @@ function getAllJobs(body) {
 
 function saveJob(body) {
   const{userId,nama,tgl,hari,tempat,durasi,status,kategori,wibMulai,wibSelesai}=body;
-  if(!userId||!nama||!tgl||!durasi) return {success:false,error:'Field tidak lengkap.'};
+  if(!userId||!nama||!tgl) return {success:false,error:'Field tidak lengkap.'};
   const id='JOB_'+Date.now();
   const wMulai = wibMulai ? "'" + wibMulai : "";
   const wSelesai = wibSelesai ? "'" + wibSelesai : "";
-  getSheet(SHEET_PEKERJAAN).appendRow([id,userId,nama,tgl,hari,tempat||'Dirumah',parseInt(durasi),status||'selesai',kategori||'',wMulai,wSelesai,new Date().toISOString()]);
+  
+  let jamText = "";
+  if (wibMulai && wibSelesai) jamText = `${wibMulai} - ${wibSelesai} WIB`;
+  else if (wibMulai) jamText = `${wibMulai} - (belum) WIB`;
+  
+  getSheet(SHEET_PEKERJAAN).appendRow([id,userId,nama,tgl,hari,tempat||'Dirumah',parseInt(durasi),status||'selesai',kategori||'',wMulai,wSelesai,jamText,new Date().toISOString()]);
   return {success:true,id};
 }
 
